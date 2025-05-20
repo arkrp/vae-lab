@@ -1,4 +1,6 @@
-#@title Specify training loop
+"""
+A simple generalizable training loop
+"""
 def train_epoch(training_model, loss_function, training_dataloader, optimizer, batch_size, *, training_epoch_granularity=7, training_epoch_dots=5):
   training_model.train()
   data_size = len(training_dataloader.dataset)
