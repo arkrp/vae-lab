@@ -1,3 +1,4 @@
+import torch
 def diagonal_guassian_unnormalized_log_likelyhood(mean, stdev, draw):
   mean = torch.flatten(mean)
   stdev = torch.flatten(stdev)

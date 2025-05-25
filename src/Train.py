@@ -1,10 +1,13 @@
+import torch
+from torch.utils.data import DataLoader
+from math import ceil
 """
 A simple generalizable training loop
 """
 def train_epoch(training_model, loss_function, training_dataloader, optimizer, batch_size, *, training_epoch_granularity=7, training_epoch_dots=5):
   training_model.train()
   data_size = len(training_dataloader.dataset)
-  num_batches = math.ceil(data_size/batch_size)
+  num_batches = ceil(data_size/batch_size)
   batch_report_point = num_batches//training_epoch_granularity
   batch_dot_point = (batch_report_point//training_epoch_dots)
   for batch_number, (X,_) in enumerate(training_dataloader):

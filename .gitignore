@@ -1,4 +1,4 @@
 .vae-lab
 __pycache__
 *.log
-data/*
+data
