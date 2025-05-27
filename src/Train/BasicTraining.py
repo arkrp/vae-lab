@@ -21,7 +21,7 @@ def train_epoch(training_model, loss_function, training_dataloader, optimizer, b
     report_point = batch_number % batch_report_point
     dot_point = report_point % batch_dot_point
     if batch_dot_point - dot_point == 1:
-      print('.', end='')
+      print('.', end='', flush=True)
     if batch_report_point - report_point == 1:
       loss_score = loss.item()
       current = batch_number * batch_size + len(X)
@@ -38,7 +38,7 @@ def test_epoch(testing_model, loss_function, testing_dataloader, batch_size, *, 
       break
   average_loss = total_loss/samples_tested
   return average_loss.item()
-def train_loop(model, loss_function, training_dataset, optimizer, *, testing_dataset=None, batch_size=64, epochs=3, training_epoch_granularity=7, training_epoch_dots=5, testing_epoch_dots=10):# we making this look nice before we move on! TODO
+def train_loop(model, loss_function, training_dataset, optimizer, *, testing_dataset=None, batch_size=64, epochs=3, training_epoch_granularity=7, training_epoch_dots=5, testing_epoch_dots=10):
   print('Training Starting!')
   training_dataloader = DataLoader(training_dataset, batch_size=batch_size, shuffle=True)
   testing_dataloader = None
