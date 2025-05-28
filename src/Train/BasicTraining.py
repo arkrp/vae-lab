@@ -1,4 +1,5 @@
 import torch
+import pandas as pd
 from torch.utils.data import DataLoader
 from math import ceil
 """
@@ -58,6 +59,6 @@ def train_loop(model, loss_function, training_dataset, optimizer, *, testing_dat
       print(f'Average Test Set Loss: {average_testing_loss}')
   print('Training Complete!')
   if testing_dataset:
-    return training_loss_record, testing_loss_record
+      return pd.DataFrame({'epoch':range(1,epochs+1), 'training loss':training_loss_record, 'testing loss':testing_loss_record})
   else:
-    return training_loss_record
+      return pd.DataFrame({'epoch':range(1,epochs+1), 'training loss':training_loss_record})

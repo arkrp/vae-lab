@@ -4,7 +4,7 @@ import logging
 logger = logging.getLogger(__name__)
 logger.info('Loading NonUniformEncoder')
 class NonUniformEncoder(nn.Module):
-  def __init__(self, *, embedding_dimensionality=10, data_shape=torch.Size([1, 28, 28]), layer_dimensionality=128, uniform_stdev=0.1):
+  def __init__(self, *, embedding_dimensionality=10, data_shape=torch.Size([1, 28, 28]), layer_dimensionality=128, uniform_stdev=0.05):
     super().__init__()
     self.uniform_stdev = uniform_stdev
     self.embedding_dimensionality = embedding_dimensionality
