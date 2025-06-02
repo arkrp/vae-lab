@@ -3,6 +3,8 @@
 #TODO make this use MaskingSubencoders to do its job
 #TODO make the sampling work with the modified formulation of combined MaskingSubencoders.
 #TODO make a mask inversion function
+#TODO write a masking function
+#TODO write the appropriate guassian combiner function.
 #  setup
 import torch
 from torch import nn
@@ -13,8 +15,10 @@ logger.info('Loading FixedMaskingEncoder')
 class FixedMaskingEncoder(nn.Module):
   def __init__(self, *, subencoder, mask=torch.zeros([1, 28, 28])):
     super().__init__()
+    #  Make sure the subencoder is appropriately sized
     if subencoder.data_shape != mask.shape:
         raise ValueError(f'Mask does not match subencoder data shape {subencoder.data_shape=} {mask.shape=}')
+    # 
     #  save arguments
     self.mask = mask
     self.subencoder = subencoder
@@ -26,6 +30,7 @@ class FixedMaskingEncoder(nn.Module):
     stdev = self.uniform_stdev + torch.abs(network_stdev)
     return mean, stdev
   # 
+#  Check encoder integrity
 logger.info('Verifying FixedMaskingEncoder integrity...')
 fixed_masking_encoder_settings = {'embedding_dimensionality':2, 'data_shape':torch.Size([5,5]), 'layer_dimensionality':16}
 fixed_masking_encoder = FixedMaskingEncoder(**fixed_masking_encoder_settings)
@@ -39,3 +44,4 @@ try:
     raise ValueError(f'Unexpected encoder stdev output size {dummy_stdev.size()}, expected {expected_output_size}')
 except Exception as e:
   raise ValueError('FixedMaskingEncoder Inoperable. Repair needed.') from e
+# 
