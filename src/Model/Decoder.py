@@ -6,6 +6,9 @@ logger.info('Loading Decoder')
 class Decoder(nn.Module):
   def __init__(self, *, embedding_dimensionality=10, data_shape=torch.Size([1, 28, 28]), layer_dimensionality=128, uniform_stdev=0.05):
     super().__init__()
+    self.embedding_dimensionality=embedding_dimensionality
+    self.data_shape=data_shape
+    self.layer_dimensionality=layer_dimensionality
     self.uniform_stdev = uniform_stdev
     self.dstack = nn.Sequential(
         nn.BatchNorm1d(embedding_dimensionality),
