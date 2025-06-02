@@ -2,18 +2,17 @@
 #TODO make this work by masking off a portion of an image.
 #TODO make this use MaskingSubencoders to do its job
 #TODO make the sampling work with the modified formulation of combined MaskingSubencoders.
-#TODO make a mask inversion function
-#TODO write a masking function
 #TODO write the appropriate guassian combiner function.
 #  setup
 import torch
 from torch import nn
 import logging
+import Mask from Helper.Mask
 logger = logging.getLogger(__name__)
 logger.info('Loading FixedMaskingEncoder')
 # 
 class FixedMaskingEncoder(nn.Module):
-  def __init__(self, *, subencoder, mask=torch.zeros([1, 28, 28])):
+  def __init__(self, *, subencoder, mask=Mask(torch.zeros([1, 28, 28]))):
     super().__init__()
     #  Make sure the subencoder is appropriately sized
     if subencoder.data_shape != mask.shape:
@@ -25,6 +24,8 @@ class FixedMaskingEncoder(nn.Module):
     # 
     self.flatten = nn.Flatten()
   def forward(self, input): #   TODO change this to the appropriate forward function
+    masked_input_1 = mask.censor(input)
+    masked_input_2 = mask.invert().censor(input)
     network_output = self.estack(self.flatten(input))
     mean, network_stdev = torch.split(network_output, self.embedding_dimensionality, dim=1)
     stdev = self.uniform_stdev + torch.abs(network_stdev)
