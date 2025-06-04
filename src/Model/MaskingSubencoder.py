@@ -1,7 +1,8 @@
+#  notes
 #basically this is just an encoder but we mask out portions of the image using a mask parameter to the forward.
 #note that ones in the mask are the things that are considered blocking out information
 #oddly this seemed to be a really really easy modification. Literally just add a mask to a standard encoder. neat!
-#TODO fix the tests
+# 
 #  setup!
 import torch
 from torch import nn
@@ -21,7 +22,7 @@ class MaskingSubencoder(nn.Module):
     #  make network components!
     self.flatten = nn.Flatten()
     self.estack = nn.Sequential(
-        nn.BatchNorm1d(data_shape.numel()),
+        nn.BatchNorm1d(data_shape.numel()*2),
         nn.Linear(data_shape.numel(), layer_dimensionality),
         nn.BatchNorm1d(layer_dimensionality),
         nn.ReLU(),
@@ -33,18 +34,36 @@ class MaskingSubencoder(nn.Module):
     # 
   # 
   def forward(self, input, mask): #  
-    input[mask==1.0] = 0.0
-    network_output = self.estack(self.flatten(input))
+    #  validate the input
+    #  validate input size
+    if input.size() != self.data_shape:
+        raise ValueError('input is of inappropriate size')
+    # 
+    #  validate mask size
+    if mask.size() != self.data_shape:
+        raise ValueError('mask is of inappropriate size')
+    # 
+    # 
+    #  run the network
+    network_output = self.estack(
+            torch.hstack(
+                self.flatten(mask.censor(input)),
+                self.flatten(mask)))
     mean, network_stdev = torch.split(network_output, self.embedding_dimensionality, dim=1)
     stdev = self.uniform_stdev + torch.abs(network_stdev)
+    # 
+    #  return the results
     return mean, stdev
+    # 
   # 
+#  verify subencoder integrity
 logger.info('Verifying MaskingSubencoder integrity...')
 fixed_masking_encoder_settings = {'embedding_dimensionality':2, 'data_shape':torch.Size([5,5]), 'layer_dimensionality':16}
 fixed_masking_encoder = MaskingSubencoder(**fixed_masking_encoder_settings)
 try:
   dummy_data = torch.zeros(torch.Size([2])+fixed_masking_encoder_settings['data_shape'])
-  dummy_mean, dummy_stdev = fixed_masking_encoder(dummy_data)
+  dummy_mask = torch.zeros(torch.Size([2])+fixed_masking_encoder_settings['data_shape'])
+  dummy_mean, dummy_stdev = fixed_masking_encoder(dummy_data, dummy_mask)
   expected_output_size = torch.Size([2 , fixed_masking_encoder_settings['embedding_dimensionality']])
   if (dummy_mean.size() != expected_output_size):
     raise ValueError(f'Unexpected encoder mean output size {dummy_mean.size()}, expected {expected_output_size}')
@@ -52,3 +71,4 @@ try:
     raise ValueError(f'Unexpected encoder stdev output size {dummy_stdev.size()}, expected {expected_output_size}')
 except Exception as e:
   raise ValueError('MaskingSubencoder Inoperable. Repair needed.') from e
+# 

@@ -1,4 +1,3 @@
-#TODO make this so it works when masking in batches, because it needs to be able to.
 #  import stuff!
 import torch
 # 
@@ -47,9 +46,10 @@ class Mask(): #  
     def censor(self, tensor): #  
     """
     Uses the Mask to censor a tensor. Takes in a tensor and returns a censored tensor
+    The tensor is assumed to be batched with a single batch dimension.
     """
     return_value = tensor.clone()
-    return_value[self.mask_tensor==1.0] = 0.0
+    return_value[:, self.mask_tensor==1.0] = 0.0
     return return_value
     # 
 # 
