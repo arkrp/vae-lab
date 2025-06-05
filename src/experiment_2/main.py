@@ -43,9 +43,11 @@ def makemodel(): #  
     shared_settings = {'embedding_dimensionality':4, 'data_shape':torch.Size([1,28,28])}
     mask = torch.zeros(shared_settings['data_shape'])
     mask[:,14:,:] = 1.0
-    encoder_settings = {'layer_dimensionality':256, 'mask':mask} | shared_settings
-    decoder_settings = {'layer_dimensionality':256} | shared_settings
-    return TrainingVAE(FixedMaskingEncoder(**encoder_settings), Decoder(**decoder_settings))
+    masking_subencoder_settings = {'layer_dimensionality':128} | shared_settings
+    decoder_settings = {'layer_dimensionality':128} | shared_settings
+    return SpecialErrorTrainingVAE(
+            FixedMaskingEncoder(MaskingSubencoder(masking_subencoder_settigns), mask),
+            Decoder(**decoder_settings))
 # 
 def main(): #  
     #  start logging
