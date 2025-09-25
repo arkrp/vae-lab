@@ -11,7 +11,7 @@
 import torch
 from torch import nn
 import logging
-import Mask from Helper.Mask
+from Helper.Mask import Mask 
 # 
 #  logging!
 logger = logging.getLogger(__name__)
@@ -67,18 +67,4 @@ class FixedMaskingEncoder(nn.Module): #  
     # 
   # 
 # 
-#  Check encoder integrity
-logger.info('Verifying FixedMaskingEncoder integrity...')
-fixed_masking_encoder_settings = {'embedding_dimensionality':2, 'data_shape':torch.Size([5,5]), 'layer_dimensionality':16}
-fixed_masking_encoder = FixedMaskingEncoder(**fixed_masking_encoder_settings)
-try:
-  dummy_data = torch.zeros(torch.Size([2])+fixed_masking_encoder_settings['data_shape'])
-  dummy_mean, dummy_stdev = fixed_masking_encoder(dummy_data)
-  expected_output_size = torch.Size([2 , fixed_masking_encoder_settings['embedding_dimensionality']])
-  if (dummy_mean.size() != expected_output_size):
-    raise ValueError(f'Unexpected encoder mean output size {dummy_mean.size()}, expected {expected_output_size}')
-  if (dummy_stdev.size() != expected_output_size):
-    raise ValueError(f'Unexpected encoder stdev output size {dummy_stdev.size()}, expected {expected_output_size}')
-except Exception as e:
-  raise ValueError('FixedMaskingEncoder Inoperable. Repair needed.') from e
-# 
+# No integrity check for fixedMaskingEncoder due to its inability to function on its own

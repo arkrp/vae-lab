@@ -36,12 +36,12 @@ class MaskingSubencoder(nn.Module):
   def forward(self, input, mask): #  
     #  validate the input
     #  validate input size
-    if input.size() != self.data_shape:
-        raise ValueError('input is of inappropriate size')
+    if input[0].size() != self.data_shape:
+        raise ValueError(f'input is of inappropriate size {input.size()} when expected size is {self.data_shape}')
     # 
     #  validate mask size
     if mask.size() != self.data_shape:
-        raise ValueError('mask is of inappropriate size')
+        raise ValueError(f'mask is of inappropriate size {mask.size()} when expected size is {self.data_shape}')
     # 
     # 
     #  run the network
@@ -58,13 +58,14 @@ class MaskingSubencoder(nn.Module):
   # 
 #  verify subencoder integrity
 logger.info('Verifying MaskingSubencoder integrity...')
-fixed_masking_encoder_settings = {'embedding_dimensionality':2, 'data_shape':torch.Size([5,5]), 'layer_dimensionality':16}
-fixed_masking_encoder = MaskingSubencoder(**fixed_masking_encoder_settings)
+masking_subencoder_settings = {'embedding_dimensionality':2, 'data_shape':torch.Size([5,5]), 'layer_dimensionality':16}
+masking_subencoder = MaskingSubencoder(**masking_subencoder_settings)
 try:
-  dummy_data = torch.zeros(torch.Size([2])+fixed_masking_encoder_settings['data_shape'])
-  dummy_mask = torch.zeros(torch.Size([2])+fixed_masking_encoder_settings['data_shape'])
-  dummy_mean, dummy_stdev = fixed_masking_encoder(dummy_data, dummy_mask)
-  expected_output_size = torch.Size([2 , fixed_masking_encoder_settings['embedding_dimensionality']])
+  dummy_data = torch.zeros(torch.Size([2])+masking_subencoder_settings['data_shape'])
+  #TODO you need an actual mask class for this to work.
+  dummy_mask = torch.zeros(torch.Size([2])+masking_subencoder_settings['data_shape'])
+  dummy_mean, dummy_stdev = masking_subencoder(dummy_data, dummy_mask)
+  expected_output_size = torch.Size([2 , masking_subencoder_settings['embedding_dimensionality']])
   if (dummy_mean.size() != expected_output_size):
     raise ValueError(f'Unexpected encoder mean output size {dummy_mean.size()}, expected {expected_output_size}')
   if (dummy_stdev.size() != expected_output_size):

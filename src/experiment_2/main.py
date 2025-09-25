@@ -10,8 +10,9 @@ import matplotlib.pyplot as plt
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 from Model.FixedMaskingEncoder import FixedMaskingEncoder
+from Model.MaskingSubencoder import MaskingSubencoder
+from Model.SpecialErrorTrainingVAE import SpecialErrorTrainingVAE
 from Model.Decoder import Decoder
-from Model.TrainingVAE import TrainingVAE
 from Loss.VAElosses import VAE_loss
 from Train.BasicTraining import train_loop
 # 

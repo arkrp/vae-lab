@@ -12,7 +12,7 @@ class SpecialErrorTrainingVAE(nn.Module):
     return {
         'encoder_mean':encoder_mean,
         'encoder_stdev':encoder_stdev,
-        'fundemental_error':fundemental_error
+        'fundemental_error':fundemental_error,
         'encoder_draw':encoder_draw,
         'decoder_mean':decoder_mean,
         'decoder_stdev':decoder_stdev

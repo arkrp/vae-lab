@@ -8,7 +8,7 @@ def assert_same_size(a, b, error_msg): #  
 class Mask(): #  
     def __init__(self, mask_tensor): #  
         #  validate input!
-        if not torch.all((mask_tensor==0.0) or (mask_tensor==1.0)):
+        if not torch.all(torch.logical_or(mask_tensor==0.0, mask_tensor==1.0)):
             raise ValueError(f'Error in creation of Mask, mask_tensor must consist solely of ones and zeroes {mask_tensor=}')
         # 
         #  accept input!
@@ -44,13 +44,13 @@ class Mask(): #  
         return self.mask_tensor.size()
     # 
     def censor(self, tensor): #  
-    """
-    Uses the Mask to censor a tensor. Takes in a tensor and returns a censored tensor
-    The tensor is assumed to be batched with a single batch dimension.
-    """
-    return_value = tensor.clone()
-    return_value[:, self.mask_tensor==1.0] = 0.0
-    return return_value
+        """
+        Uses the Mask to censor a tensor. Takes in a tensor and returns a censored tensor
+        The tensor is assumed to be batched with a single batch dimension.
+        """
+        return_value = tensor.clone()
+        return_value[:, self.mask_tensor==1.0] = 0.0
+        return return_value
     # 
 # 
 
